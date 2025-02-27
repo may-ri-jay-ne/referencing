@@ -6,8 +6,6 @@ exports.createStudent = async(req, res) =>{
     try {
        
        const findSchool = await schoolModel.findById(req.params.id)
-       console.log(findSchool);
-       
         if(!findSchool) {
            return res.status(404).json({
                 message: "Student not found"
@@ -15,8 +13,8 @@ exports.createStudent = async(req, res) =>{
         };
         const {name, email, phoneNumber, gender} =req.body;
         const data = {
-            name: name.toLowerCase(),
-            email:email.trim(),
+            name,
+            email,
             phoneNumber,
             gender
         };
@@ -26,7 +24,7 @@ exports.createStudent = async(req, res) =>{
 // to add the student inside the school database where students is mapped to an empty array
         await newStudent.save();
         // find the school id you want to add a student to, push the student inside the school
-        findSchool.school.push(newStudent._id);
+        findSchool.student.push(newStudent._id);
         await findSchool.save();
         res.status(200).json({
             message: "Student created succesfully",
@@ -42,17 +40,17 @@ exports.createStudent = async(req, res) =>{
 exports.getAllStudent = async(req, res) =>{
     try {
         const {id} = req.params;
-        const findallStudent = await studentModel.findById();
+        const findallStudent = await studentModel.find();
 
         if(!findallStudent){
             return res.status(404).json({
                 message:'student not found'
             })
         }
-
         res.status(200).json({
-            message:'student find',
-            data:findallStudent
+            message:'student found',
+            data:findallStudent,
+            total: findallStudent.length
         })
 
     } catch (error) {
@@ -66,7 +64,7 @@ exports.getAllStudent = async(req, res) =>{
 exports.getOneStudent = async(req,res)=>{
     try {
         const {id} = req.params;
-        const findOne = await studentmodel.findById(id).populate("school", "fullName department -_id");
+        const findOne = await studentModel.findById(id).populate("school", "name department -_id");
         
         if(!findOne){
             return res.status(404).json({

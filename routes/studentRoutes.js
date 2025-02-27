@@ -3,6 +3,6 @@ const { createStudent, getAllStudent } = require("../controller/studentControlle
 
 
 routes.post('/student/:id', createStudent);
-routes.get('/student/:id', getAllStudent);
+routes.get('/student', getAllStudent);
 
 module.exports = routes;
